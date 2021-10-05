@@ -31,6 +31,7 @@ namespace solidity::yul
 {
 struct Dialect;
 struct OptimiserStepContext;
+struct ControlFlowSideEffects;
 
 /**
  * Optimisation stage that removes unreachable code
@@ -57,9 +58,13 @@ public:
 	void operator()(Block& _block) override;
 
 private:
-	DeadCodeEliminator(Dialect const& _dialect): m_dialect(_dialect) {}
+	DeadCodeEliminator(
+		Dialect const& _dialect,
+		std::map<YulString, ControlFlowSideEffects> const& _sideEffects
+	): m_dialect(_dialect), m_functionSideEffects(_sideEffects) {}
 
 	Dialect const& m_dialect;
+	std::map<YulString, ControlFlowSideEffects> const& m_functionSideEffects;
 };
 
 }

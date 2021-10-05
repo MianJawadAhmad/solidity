@@ -54,20 +54,21 @@ class ConditionalSimplifier: public ASTModifier
 {
 public:
 	static constexpr char const* name{"ConditionalSimplifier"};
-	static void run(OptimiserStepContext& _context, Block& _ast)
-	{
-		ConditionalSimplifier{_context.dialect}(_ast);
-	}
+	static void run(OptimiserStepContext& _context, Block& _ast);
 
 	using ASTModifier::operator();
 	void operator()(Switch& _switch) override;
 	void operator()(Block& _block) override;
 
 private:
-	explicit ConditionalSimplifier(Dialect const& _dialect):
-		m_dialect(_dialect)
+	explicit ConditionalSimplifier(
+		Dialect const& _dialect,
+		std::map<YulString, ControlFlowSideEffects> const& _sideEffects
+	):
+		m_dialect(_dialect), m_functionSideEffects(_sideEffects)
 	{}
 	Dialect const& m_dialect;
+	std::map<YulString, ControlFlowSideEffects> const& m_functionSideEffects;
 };
 
 }
